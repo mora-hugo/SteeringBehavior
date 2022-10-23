@@ -14,5 +14,5 @@ AgentPoursuiveur::AgentPoursuiveur(Vehicle & leader, Vector2D offset, GameWorld*
 
 AgentPoursuiveur::~AgentPoursuiveur()
 {
-	Vehicle::~Vehicle();
+	//Vehicle::~Vehicle();
 }

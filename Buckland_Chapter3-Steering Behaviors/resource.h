@@ -18,6 +18,8 @@
 #define ID_VIEW_FPS                     40013
 #define ID_MENU_SMOOTHING               40014
 #define IDM_PARTITION_VIEW_NEIGHBORS    40015
+#define ID_RANDOM_CONTROL				40017
+#define ID_HUMAN_CONTROL				40018
 
 // Next default values for new objects
 // 

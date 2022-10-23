@@ -21,6 +21,8 @@
 #include "BaseGameEntity.h"
 #include "EntityFunctionTemplates.h"
 #include "vehicle.h"
+#include "AgentPoursuiveur.h"
+#include "AgentLeader.h"
 
 
 class Obstacle;
@@ -63,6 +65,7 @@ private:
 
 
   //flags to turn aids and obstacles etc on/off
+  bool  m_bRandomControl;
   bool  m_bShowWalls;
   bool  m_bShowObstacles;
   bool  m_bShowPath;
@@ -109,6 +112,11 @@ public:
   CellSpacePartition<Vehicle*>*       CellSpace(){return m_pCellSpace;}
   const std::vector<BaseGameEntity*>& Obstacles()const{return m_Obstacles;}
   const std::vector<Vehicle*>&        Agents(){return m_Vehicles;}
+
+  //Spawn bots
+  AgentLeader*       SpawnLeader(bool m_bRandomControl = true);
+  void  SpawnFollowers(int number, bool shouldProtect, AgentLeader* leader = nullptr);
+  void			     ClearBots();
 
 
   //handle WM_COMMAND messages
