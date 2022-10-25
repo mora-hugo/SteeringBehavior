@@ -135,57 +135,28 @@ AgentLeader* GameWorld::SpawnLeader(bool m_bRandomControl)
 		Prm.MaxSteeringForce,     //max force
 		maxSpeed,             //max velocity
 		Prm.MaxTurnRatePerSecond, //max turn rate
-		5,						  //scale
-		m_bRandomControl);        
+		5			                //scale
+        );        
 
 	m_Vehicles.push_back(pLeader);
 	return pLeader;
 }
 
-void GameWorld::SpawnFollowers(int number, bool shouldProtect, AgentLeader* leader)
+void GameWorld::SpawnFollowers(int number, AgentLeader* leader)
 {
-	if (shouldProtect)
-		for (int a = 0; a < number; ++a)
-		{
-			double xOffset;
-			double yOffset;
-			double rad;
-			const double rayon = 25;
-
-			rad = a * 2 * M_PI / number;
-
-			xOffset = std::sin(rad)*rayon;
-			yOffset = std::cos(rad)*rayon;
-
-			xOffset += 18;
-
-			AgentPoursuiveur* pVehicle = new AgentPoursuiveur(*leader, Vector2D(xOffset, yOffset), this,
-				Vector2D(0, 0),                 //initial position
-				RandFloat() * TwoPi,        //start rotation
-				Vector2D(0, 0),            //velocity
-				Prm.VehicleMass,          //mass
-				Prm.MaxSteeringForce,     //max force
-				Prm.MaxSpeed,             //max velocity
-				Prm.MaxTurnRatePerSecond * 2, //max turn rate
-				Prm.VehicleScale);        //scale
-			m_Vehicles.push_back(pVehicle);
-		}
-	else
+	assert(!(m_Vehicles.empty() && "You should instantiate a leader before creating the followers"));
+	for (int a = 0; a < number; ++a)
 	{
-		assert(!(m_Vehicles.empty() && "You should instantiate a leader before creating the followers"));
-		for (int a = 0; a < number; ++a)
-		{
-			AgentPoursuiveur* pVehicle = new AgentPoursuiveur(*m_Vehicles[a], Vector2D(0, -1), this,
-				Vector2D(0, 0),                 //initial position
-				RandFloat() * TwoPi,        //start rotation
-				Vector2D(0, 0),            //velocity
-				Prm.VehicleMass,          //mass
-				Prm.MaxSteeringForce,     //max force
-				Prm.MaxSpeed,             //max velocity
-				Prm.MaxTurnRatePerSecond * 2, //max turn rate
-				Prm.VehicleScale);        //scale
-			m_Vehicles.push_back(pVehicle);
-		}
+		AgentPoursuiveur* pVehicle = new AgentPoursuiveur(*m_Vehicles[a], Vector2D(0, -1), this,
+			Vector2D(0, 0),                 //initial position
+			RandFloat() * TwoPi,        //start rotation
+			Vector2D(0, 0),            //velocity
+			Prm.VehicleMass,          //mass
+			Prm.MaxSteeringForce,     //max force
+			Prm.MaxSpeed,             //max velocity
+			Prm.MaxTurnRatePerSecond * 2, //max turn rate
+			Prm.VehicleScale);        //scale
+		m_Vehicles.push_back(pVehicle);
 	}
 		
 }
@@ -373,28 +344,28 @@ void GameWorld::HandleKeyPresses(WPARAM wParam)
 
 	case 'S':
 		if (!m_bRandomControl) {
-			m_Vehicles[0]->Steering()->WanderOff();
 			m_Vehicles[0]->RotateHeadingToFacePosition(Vector2D(m_Vehicles[0]->Pos().x, m_Vehicles[0]->Pos().y + 20));
+            m_Vehicles[0]->SetVelocity(Vector2D(0, m_Vehicles[0]->MaxSpeed()));
 		}
 		break;
 	case 'W':
 		if (!m_bRandomControl) {
-			m_Vehicles[0]->Steering()->WanderOff();
 			m_Vehicles[0]->RotateHeadingToFacePosition(Vector2D(m_Vehicles[0]->Pos().x, m_Vehicles[0]->Pos().y - 20));
+            m_Vehicles[0]->SetVelocity(Vector2D(0, m_Vehicles[0]->MaxSpeed() * (-1)));
 			
 		}
 		break;
 	case 'D':
 		if (!m_bRandomControl) {
-			m_Vehicles[0]->Steering()->WanderOff();
 			m_Vehicles[0]->RotateHeadingToFacePosition(Vector2D(m_Vehicles[0]->Pos().x + 20, m_Vehicles[0]->Pos().y));
+            m_Vehicles[0]->SetVelocity(Vector2D(m_Vehicles[0]->MaxSpeed(), 0));
 			
 		}
 		break;
 	case 'A':
 		if (!m_bRandomControl) {
-			m_Vehicles[0]->Steering()->WanderOff();
 			m_Vehicles[0]->RotateHeadingToFacePosition(Vector2D(m_Vehicles[0]->Pos().x - 20, m_Vehicles[0]->Pos().y));
+            m_Vehicles[0]->SetVelocity(Vector2D(m_Vehicles[0]->MaxSpeed() * (-1), 0));
 		}
 
   }//end switch
@@ -405,13 +376,19 @@ void GameWorld::HandleKeyPresses(WPARAM wParam)
 //-------------------------- HandleMenuItems -----------------------------
 void GameWorld::HandleMenuItems(WPARAM wParam, HWND hwnd)
 {
+
+  const int number = m_Vehicles.size() - 1;
+
   switch(wParam)
   {
 	case ID_RANDOM_CONTROL:
 		m_bRandomControl = true;
-		ClearBots();
-		SpawnLeader(m_bRandomControl);
-		SpawnFollowers(20, !m_bRandomControl);
+        static_cast<AgentLeader*>(m_Vehicles[0])->setControl(m_bRandomControl);
+        for (unsigned int i = 1; i < m_Vehicles.size(); i++)
+        {
+            m_Vehicles[i]->Steering()->SetTargetAgent1(m_Vehicles[i-1]);
+            m_Vehicles[i]->Steering()->SetOffset(Vector2D(0, -1));
+        }
 		//check the menu
 		ChangeMenuState(hwnd, ID_RANDOM_CONTROL, MFS_CHECKED);
 		//uncheck the menu
@@ -420,8 +397,27 @@ void GameWorld::HandleMenuItems(WPARAM wParam, HWND hwnd)
 	  break;
 	case ID_HUMAN_CONTROL:
 		m_bRandomControl = false;
-		ClearBots();
-		SpawnFollowers(20, !m_bRandomControl, SpawnLeader(m_bRandomControl));
+        static_cast<AgentLeader*>(m_Vehicles[0])->setControl(m_bRandomControl);
+        
+        for (unsigned int i = 1; i < m_Vehicles.size(); i++)
+        {
+            int a = i - 1;
+
+            double xOffset;
+            double yOffset;
+            double rad;
+            const double rayon = 25;
+
+            rad = a * 2 * M_PI / number;
+
+            xOffset = std::sin(rad) * rayon;
+            yOffset = std::cos(rad) * rayon;
+
+            xOffset += 18;
+
+            m_Vehicles[i]->Steering()->SetTargetAgent1(m_Vehicles[0]);
+            m_Vehicles[i]->Steering()->SetOffset(Vector2D(xOffset, yOffset));
+        }
 		//check the menu
 		ChangeMenuState(hwnd, ID_HUMAN_CONTROL, MFS_CHECKED);	
 		//uncheck the menu

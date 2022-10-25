@@ -115,7 +115,7 @@ public:
 
   //Spawn bots
   AgentLeader*       SpawnLeader(bool m_bRandomControl = true);
-  void  SpawnFollowers(int number, bool shouldProtect, AgentLeader* leader = nullptr);
+  void  SpawnFollowers(int number, AgentLeader* leader = nullptr);
   void			     ClearBots();
 
 

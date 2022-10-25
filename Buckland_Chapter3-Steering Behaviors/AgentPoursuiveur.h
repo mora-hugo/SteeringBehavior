@@ -17,8 +17,6 @@ public:
         double    max_turn_rate,
         double    scale);
 
-	virtual ~AgentPoursuiveur();
-
 private:
 	const Vehicle & MyLeader;
 

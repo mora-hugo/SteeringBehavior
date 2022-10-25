@@ -83,6 +83,8 @@ LRESULT CALLBACK WindowProc (HWND   hwnd,
          
          g_GameWorld = new GameWorld(cxClient, cyClient);
 
+         auto* leader = g_GameWorld->SpawnLeader(false);
+         g_GameWorld->SpawnFollowers(20, leader);
 		 g_GameWorld->HandleMenuItems(ID_RANDOM_CONTROL, hwnd);
 		 g_GameWorld->HandleMenuItems(IDR_WEIGHTED_SUM, hwnd);
 
