@@ -63,6 +63,7 @@ private:
   //keeps track of the average FPS
   double                         m_dAvFrameTime;
 
+  unsigned int m_radius;
 
   //flags to turn aids and obstacles etc on/off
   bool  m_bRandomControl;
@@ -95,6 +96,9 @@ public:
 
   void  Render();
 
+  void  SetRadius(unsigned int radius);
+
+  void UpdateFollowerOffset();
 
   void  NonPenetrationContraint(Vehicle* v){EnforceNonPenetrationConstraint(v, m_Vehicles);}
 

@@ -41,7 +41,8 @@ GameWorld::GameWorld(int cx, int cy):
             m_pPath(NULL),
             m_bRenderNeighbors(false),
             m_bViewKeys(false),
-            m_bShowCellSpaceInfo(false)
+            m_bShowCellSpaceInfo(false),
+            m_radius(1)
 {
 
   //setup the spatial subdivision class
@@ -371,7 +372,30 @@ void GameWorld::HandleKeyPresses(WPARAM wParam)
   }//end switch
 }
 
+void GameWorld::UpdateFollowerOffset() {
+    if (!m_Vehicles[0]->Steering()->isWanderOn()){
+        for (unsigned int i = 1; i < m_Vehicles.size(); i++)
+        {
+            int a = i - 1;
 
+            double xOffset;
+            double yOffset;
+            double rad;
+            const double rayon = m_radius*15;
+
+            rad = a * 2 * M_PI / (m_Vehicles.size() - 1);
+
+            xOffset = std::sin(rad) * rayon;
+            yOffset = std::cos(rad) * rayon;
+
+            xOffset += 18;
+            m_Vehicles[i]->Steering()->SetOffset(Vector2D(xOffset, yOffset));
+
+        }
+    }
+
+    
+}
 
 //-------------------------- HandleMenuItems -----------------------------
 void GameWorld::HandleMenuItems(WPARAM wParam, HWND hwnd)
@@ -381,6 +405,33 @@ void GameWorld::HandleMenuItems(WPARAM wParam, HWND hwnd)
 
   switch(wParam)
   {
+
+
+
+
+    case ID_RADIUS_1:
+        SetRadius(1);
+        UpdateFollowerOffset();
+        break;
+
+    case ID_RADIUS_2:
+        SetRadius(2);
+        UpdateFollowerOffset();
+
+        break;
+
+    case ID_RADIUS_3:
+        SetRadius(3);
+        UpdateFollowerOffset();
+
+        break;
+
+    case ID_RADIUS_4:
+        SetRadius(4);
+        UpdateFollowerOffset();
+
+        break;
+
 	case ID_RANDOM_CONTROL:
 		m_bRandomControl = true;
         static_cast<AgentLeader*>(m_Vehicles[0])->setControl(m_bRandomControl);
@@ -406,7 +457,7 @@ void GameWorld::HandleMenuItems(WPARAM wParam, HWND hwnd)
             double xOffset;
             double yOffset;
             double rad;
-            const double rayon = 25;
+            const double rayon = m_radius*15;
 
             rad = a * 2 * M_PI / number;
 
@@ -695,4 +746,9 @@ void GameWorld::Render()
     m_pCellSpace->RenderCells();
   }
 
+}
+
+void GameWorld::SetRadius(unsigned int radius)
+{
+    this->m_radius = radius;
 }

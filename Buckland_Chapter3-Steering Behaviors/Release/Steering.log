@@ -1,0 +1,10 @@
+﻿  GameWorld.cpp
+f:\git\steeringbehavior\common\misc\cellspacepartition.h(234): warning C4018: '>' : incompatibilité signed/unsigned
+  f:\git\steeringbehavior\common\misc\cellspacepartition.h(228): note: pendant la compilation de la fonction membre '<Inconnu>' (classe <Inconnu>)
+  f:\git\steeringbehavior\common\misc\cellspacepartition.h(249): note: voir la référence à l'instanciation de la fonction modèle 'int CellSpacePartition<Vehicle *>::PositionToIndex(const Vector2D &) const' en cours de compilation
+  f:\git\steeringbehavior\common\misc\cellspacepartition.h(130): note: pendant la compilation de la fonction membre '<Inconnu>' (classe <Inconnu>)
+  f:\git\steeringbehavior\buckland_chapter3-steering behaviors\gameworld.cpp(49): note: voir la référence à l'instanciation de la fonction modèle 'CellSpacePartition<Vehicle *>::CellSpacePartition(double,double,int,int,int)' en cours de compilation
+  f:\git\steeringbehavior\buckland_chapter3-steering behaviors\gameworld.cpp(49): note: voir la référence à l'instanciation de classe modèle 'CellSpacePartition<Vehicle *>' en cours de compilation
+  main.cpp
+  Génération de code en cours...
+  Steering.vcxproj -> F:\Git\SteeringBehavior\Buckland_Chapter3-Steering Behaviors\.\Release\Steering.exe

@@ -21,6 +21,14 @@
 #define ID_RANDOM_CONTROL				40017
 #define ID_HUMAN_CONTROL				40018
 
+#define ID_RADIUS_1			 			40019
+#define ID_RADIUS_2						40020
+#define ID_RADIUS_3						40021
+#define ID_RADIUS_4						40022
+
+
+
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

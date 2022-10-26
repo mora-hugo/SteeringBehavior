@@ -30,9 +30,17 @@ IDR_MENU1 MENU DISCARDABLE
 BEGIN
 	POPUP "Mode"
 	BEGIN
-	MENUITEM "Random control", ID_RANDOM_CONTROL
-	MENUITEM "Human control", ID_HUMAN_CONTROL
+	    MENUITEM "Random control",              ID_RANDOM_CONTROL
+	    MENUITEM "Human control",               ID_HUMAN_CONTROL
 	END
+    POPUP "Radius"
+    BEGIN
+        MENUITEM "1", ID_RADIUS_1
+        MENUITEM "2", ID_RADIUS_2
+        MENUITEM "3", ID_RADIUS_3
+        MENUITEM "4", ID_RADIUS_4
+    END
+    
     POPUP "Objects"
     BEGIN
         MENUITEM "Walls On/Off",                ID_OB_WALLS
